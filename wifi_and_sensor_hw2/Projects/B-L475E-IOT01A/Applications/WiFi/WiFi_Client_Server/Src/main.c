@@ -76,6 +76,7 @@ int main(void)
   uint8_t  MAC_Addr[6] = {0};
   uint8_t  IP_Addr[4] = {0};
   uint8_t TxData[] = "STM32 : Hello!\n";
+  uint8_t TxData2[20];
   int32_t Socket = -1;
   uint16_t Datalen;
   int32_t ret;
@@ -188,7 +189,9 @@ int main(void)
 
   while(1)
   {
-    if(Socket != -1)
+	BSP_ACCELERO_Init();
+
+	if(Socket != -1)
     {
       ret = WIFI_ReceiveData(Socket, RxData, sizeof(RxData)-1, &Datalen, WIFI_READ_TIMEOUT);
       if(ret == WIFI_STATUS_OK)
@@ -196,8 +199,19 @@ int main(void)
         if(Datalen > 0)
         {
           RxData[Datalen]=0;
-          TERMOUT("Received: %s\n",RxData);
-          ret = WIFI_SendData(Socket, TxData, sizeof(TxData), &Datalen, WIFI_WRITE_TIMEOUT);
+      	  int16_t DataXYZ[3];
+      	  BSP_ACCELERO_AccGetXYZ(&DataXYZ[0]);
+      	  int TxLength2 = snprintf((char *)TxData2,
+      	                    sizeof(TxData2),
+      	                    "X=%d, Y=%d, Z=%d\r\n",
+      	                    DataXYZ[0],
+      	                    DataXYZ[1],
+      	                    DataXYZ[2]);
+
+      	  TERMOUT("Received: %s\n",RxData);
+          WIFI_SendData(Socket, TxData, sizeof(TxData), &Datalen, WIFI_WRITE_TIMEOUT);
+          ret = WIFI_SendData(Socket, TxData2, TxLength2, &Datalen, WIFI_WRITE_TIMEOUT);
+
           if (ret != WIFI_STATUS_OK)
           {
             TERMOUT("> ERROR : Failed to Send Data, connection closed\n");

@@ -11,3 +11,5 @@ mx.scratch
 *.map
 *.list
 .metadata/
+
+wifi_and_sensor_hw2/**/*.launch

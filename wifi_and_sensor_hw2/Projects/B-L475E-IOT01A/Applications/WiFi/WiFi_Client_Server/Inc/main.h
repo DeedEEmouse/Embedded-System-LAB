@@ -23,6 +23,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "wifi.h"
 #include "stm32l475e_iot01.h"
+#include "stm32l475e_iot01_accelero.h"
 #include "stdio.h"
 
 void SPI3_IRQHandler(void);
