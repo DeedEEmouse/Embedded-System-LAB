@@ -1,0 +1,13 @@
+build
+mx.scratch
+!.settings
+
+**/Debug/
+**/Release/
+**/Binaries/
+*.o
+*.d
+*.elf
+*.map
+*.list
+.metadata/
