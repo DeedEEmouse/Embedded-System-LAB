@@ -23,10 +23,10 @@
 #define TERMINAL_USE
 
 /* Update SSID and PASSWORD with own Access point settings */
-#define SSID     "Ryan iPhone"
-#define PASSWORD "ryan0708"
+#define SSID     "Huang iPhone"
+#define PASSWORD "123456787654321"
 
-uint8_t RemoteIP[] = {172,20,10,3};
+uint8_t RemoteIP[] = {172,20,10,4};
 #define RemotePORT	8002
 
 #define WIFI_WRITE_TIMEOUT 10000
@@ -44,8 +44,8 @@ uint8_t RemoteIP[] = {172,20,10,3};
 #if defined (TERMINAL_USE)
 extern UART_HandleTypeDef hDiscoUart;
 #endif /* TERMINAL_USE */
-static uint8_t RxData [500];
-
+//static uint8_t RxData [500];
+static volatile uint8_t motionDetected = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 #if defined (TERMINAL_USE)
@@ -59,13 +59,51 @@ static uint8_t RxData [500];
 #endif /* TERMINAL_USE */
 
 static void SystemClock_Config(void);
-
+static void Motion_EXTI_Init(void);
+static void LSM6DSL_SignificantMotion_Init(void);
 
 
 extern  SPI_HandleTypeDef hspi;
 
 /* Private functions ---------------------------------------------------------*/
+static void LSM6DSL_SignificantMotion_Init(void)
+{
+    uint8_t value;
 
+    value = SENSOR_IO_Read(LSM6DSL_ACC_GYRO_I2C_ADDRESS_LOW,
+                           LSM6DSL_ACC_GYRO_CTRL10_C);
+
+    value |= 0x05;
+
+    SENSOR_IO_Write(LSM6DSL_ACC_GYRO_I2C_ADDRESS_LOW,
+                    LSM6DSL_ACC_GYRO_CTRL10_C,
+                    value);
+
+    value = SENSOR_IO_Read(LSM6DSL_ACC_GYRO_I2C_ADDRESS_LOW,
+                           LSM6DSL_ACC_GYRO_INT1_CTRL);
+
+    value |= 0x40;
+
+    SENSOR_IO_Write(LSM6DSL_ACC_GYRO_I2C_ADDRESS_LOW,
+                    LSM6DSL_ACC_GYRO_INT1_CTRL,
+                    value);
+}
+
+static void Motion_EXTI_Init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+
+    GPIO_InitStruct.Pin = GPIO_PIN_11;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+    HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+}
 /**
   * @brief  Main program
   * @param  None
@@ -75,8 +113,8 @@ int main(void)
 {
   uint8_t  MAC_Addr[6] = {0};
   uint8_t  IP_Addr[4] = {0};
-  uint8_t TxData[] = "STM32 : Hello!\n";
-  uint8_t TxData2[20];
+//  uint8_t TxData[] = "STM32 : Hello!\n";
+  uint8_t TxData2[64];
   int32_t Socket = -1;
   uint16_t Datalen;
   int32_t ret;
@@ -187,43 +225,46 @@ int main(void)
     BSP_LED_On(LED2);
   }
 
+  if (BSP_ACCELERO_Init() != ACCELERO_OK)
+  {
+      TERMOUT("> ERROR : Accelerometer init failed\r\n");
+  }
+  else
+  {
+      LSM6DSL_SignificantMotion_Init();
+      Motion_EXTI_Init();
+      TERMOUT("> Significant motion detection initialized\r\n");
+  }
+
+  uint32_t lastSendTime = 0;
+
   while(1)
   {
-	BSP_ACCELERO_Init();
-
 	if(Socket != -1)
     {
-      ret = WIFI_ReceiveData(Socket, RxData, sizeof(RxData)-1, &Datalen, WIFI_READ_TIMEOUT);
-      if(ret == WIFI_STATUS_OK)
-      {
-        if(Datalen > 0)
-        {
-          RxData[Datalen]=0;
-      	  int16_t DataXYZ[3];
-      	  BSP_ACCELERO_AccGetXYZ(&DataXYZ[0]);
-      	  int TxLength2 = snprintf((char *)TxData2,
-      	                    sizeof(TxData2),
-      	                    "X=%d, Y=%d, Z=%d\r\n",
-      	                    DataXYZ[0],
-      	                    DataXYZ[1],
-      	                    DataXYZ[2]);
-
-      	  TERMOUT("Received: %s\n",RxData);
-          WIFI_SendData(Socket, TxData, sizeof(TxData), &Datalen, WIFI_WRITE_TIMEOUT);
-          ret = WIFI_SendData(Socket, TxData2, TxLength2, &Datalen, WIFI_WRITE_TIMEOUT);
-
-          if (ret != WIFI_STATUS_OK)
-          {
-            TERMOUT("> ERROR : Failed to Send Data, connection closed\n");
-            break;
-          }
-        }
-      }
-      else
-      {
-        TERMOUT("> ERROR : Failed to Receive Data, connection closed\n");
-        break;
-      }
+	  if(HAL_GetTick() - lastSendTime >=100){
+		  lastSendTime = HAL_GetTick();
+		  int16_t DataXYZ[3];
+		  BSP_ACCELERO_AccGetXYZ(&DataXYZ[0]);
+		  int TxLength2 = snprintf((char *)TxData2, sizeof(TxData2),"{\"type\":\"data\",\"x\":%d,\"y\":%d,\"z\":%d}\n",DataXYZ[0],DataXYZ[1],DataXYZ[2]);
+		  ret = WIFI_SendData(Socket, TxData2, TxLength2, &Datalen, WIFI_WRITE_TIMEOUT);
+		  if (ret != WIFI_STATUS_OK)
+		  {
+			  TERMOUT("> ERROR : Failed to send sensor data\r\n");
+			  break;
+		  }
+	  }
+	  if (motionDetected)
+	  {
+		  motionDetected = 0;
+		  uint8_t MotionMsg[] = "{\"type\":\"motion\"}\n";
+		  TERMOUT("> Significant motion detected!\r\n");
+		  ret = WIFI_SendData(Socket,MotionMsg,sizeof(MotionMsg) - 1, &Datalen,WIFI_WRITE_TIMEOUT);
+		  if (ret != WIFI_STATUS_OK)
+		  {
+			  TERMOUT("> ERROR : Failed to send motion event\r\n");
+		  }
+	  }
     }
   }
 }
@@ -334,6 +375,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
       SPI_WIFI_ISR();
       break;
     }
+    case (GPIO_PIN_11):
+	{
+		motionDetected = 1;
+		break;
+	}
     default:
     {
       break;
