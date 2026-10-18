@@ -191,8 +191,8 @@ tBleStatus aci_gatt_add_char_desc(uint16_t serviceHandle,
  *   	 connection length parameters (decided by the master, see aci_l2cap_connection_parameter_update_request()
  *   	 for more info on how to suggest new connection parameters from a slave). If the application does not
  *   	 want to lose notifications because BlueNRG buffer becomes full, it has to retry again till the function
- *   	 returns @ref BLE_STATUS_SUCCESS or any other error code.\n
- *   	 Example:\n
+ *   	 returns @ref BLE_STATUS_SUCCESS or any other error code.\n\r
+ *   	 Example:\n\r
  *   	 Here if BlueNRG buffer become full because BlueNRG was not able to send packets for a while, some
  *   	 notifications will be lost.
  *   	 @code
@@ -205,7 +205,7 @@ tBleStatus aci_gatt_add_char_desc(uint16_t serviceHandle,
  *			ret = aci_gatt_update_char_value(accServHandle, freeFallCharHandle, 0, 1, &val);
  *
  *			if (ret != BLE_STATUS_SUCCESS){
- *			  PRINTF("Error while updating FFall characteristic.\n") ;
+ *			  PRINTF("Error while updating FFall characteristic.\n\r") ;
  *			  return BLE_STATUS_ERROR ;
  *			}
  *		    return BLE_STATUS_SUCCESS;
@@ -443,12 +443,12 @@ tBleStatus aci_gatt_disc_all_charac_descriptors(uint16_t conn_handle, uint16_t c
  * 		  Before procedure completion the response packet is given through @ref EVT_BLUE_ATT_READ_RESP event.
  * @param conn_handle Connection handle for which the command is given
  * @param attr_handle Handle of the characteristic to be read
- * @return Value indicating success or error code.\n
- * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n
- *		- If the exchange has already taken place\n
- *		- If GATT is expecting response for previous request\n
- *		- Already a request is in the queue to be sent\n
- *		- Channel not open\n
+ * @return Value indicating success or error code.\n\r
+ * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n\r
+ *		- If the exchange has already taken place\n\r
+ *		- If GATT is expecting response for previous request\n\r
+ *		- Already a request is in the queue to be sent\n\r
+ *		- Channel not open\n\r
  *		- Already one GATT procedure is started
  */
 tBleStatus aci_gatt_read_charac_val(uint16_t conn_handle, uint16_t attr_handle);
@@ -476,12 +476,12 @@ tBleStatus aci_gatt_read_using_charac_uuid(uint16_t conn_handle, uint16_t start_
  * @param conn_handle Connection handle for which the command is given
  * @param attr_handle Handle of the characteristic to be read
  * @param val_offset Offset from which the value needs to be read
- * @return Value indicating success or error code.\n
- * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n
- *		- If the exchange has already taken place\n
- *		- If GATT is expecting response for previous request\n
- *		- Already a request is in the queue to be sent\n
- *		- Channel not open\n
+ * @return Value indicating success or error code.\n\r
+ * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n\r
+ *		- If the exchange has already taken place\n\r
+ *		- If GATT is expecting response for previous request\n\r
+ *		- Already a request is in the queue to be sent\n\r
+ *		- Channel not open\n\r
  *		- Already one GATT procedure is started
  */
 tBleStatus aci_gatt_read_long_charac_val(uint16_t conn_handle, uint16_t attr_handle,
@@ -509,12 +509,12 @@ tBleStatus aci_gatt_read_multiple_charac_val(uint16_t conn_handle, uint8_t num_h
  * @param attr_handle Handle of the characteristic to be written
  * @param value_len Length of the value to be written
  * @param[in] attr_value Value to be written
- * @return Value indicating success or error code.\n
- * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n
- *		- If the exchange has already taken place\n
- *		- If GATT is expecting response for previous request\n
- *		- Already a request is in the queue to be sent\n
- *		- Channel not open\n
+ * @return Value indicating success or error code.\n\r
+ * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n\r
+ *		- If the exchange has already taken place\n\r
+ *		- If GATT is expecting response for previous request\n\r
+ *		- Already a request is in the queue to be sent\n\r
+ *		- Channel not open\n\r
  *		- Already one GATT procedure is started
  */
 tBleStatus aci_gatt_write_charac_value(uint16_t conn_handle, uint16_t attr_handle,
@@ -585,12 +585,12 @@ tBleStatus aci_gatt_read_long_charac_desc(uint16_t conn_handle, uint16_t attr_ha
  * @param attr_handle Handle of the attribute to be written
  * @param value_len Length of the value to be written
  * @param[in] attr_value Value to be written
- * @return Value indicating success or error code.\n
- * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n
- *		- If the exchange has already taken place\n
- *		- If GATT is expecting response for previous request\n
- *		- Already a request is in the queue to be sent\n
- *		- Channel not open\n
+ * @return Value indicating success or error code.\n\r
+ * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n\r
+ *		- If the exchange has already taken place\n\r
+ *		- If GATT is expecting response for previous request\n\r
+ *		- Already a request is in the queue to be sent\n\r
+ *		- Channel not open\n\r
  *		- Already one GATT procedure is started
  */
 tBleStatus aci_gatt_write_charac_descriptor(uint16_t conn_handle, uint16_t attr_handle,
@@ -613,12 +613,12 @@ tBleStatus aci_gatt_read_charac_desc(uint16_t conn_handle, uint16_t attr_handle)
  * @param attr_handle Handle of the attribute to be written
  * @param val_len Length of the value to be written (up to ATT_MTU - 3)
  * @param[in] attr_val Value to be written
- * @return Value indicating success or error code.\n
- * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n
- *		- If the exchange has already taken place\n
- *		- If GATT is expecting response for previous request\n
- *		- Already a request is in the queue to be sent\n
- *		- Channel not open\n
+ * @return Value indicating success or error code.\n\r
+ * 		 It can be @ref BLE_STATUS_NOT_ALLOWED in the following cases:\n\r
+ *		- If the exchange has already taken place\n\r
+ *		- If GATT is expecting response for previous request\n\r
+ *		- Already a request is in the queue to be sent\n\r
+ *		- Channel not open\n\r
  *		- Already one GATT procedure is started
  */
 tBleStatus aci_gatt_write_without_response(uint16_t conn_handle, uint16_t attr_handle,
@@ -653,7 +653,7 @@ tBleStatus aci_gatt_confirm_indication(uint16_t conn_handle);
  *  	 passed to the client.
  * @param conn_handle Connection handle for which the command is given
  * @param attr_handle Handle of the attribute that was passed in the event @ref EVT_BLUE_GATT_WRITE_PERMIT_REQ.
- * @param write_status 0x00: The value can be written to the attribute specified by attr_handle\n
+ * @param write_status 0x00: The value can be written to the attribute specified by attr_handle\n\r
  * 					   0x01: The value cannot be written to the attribute specified by the attr_handle.
  * @param err_code  The error code that has to be passed to the client in case the write has to be rejected.
  * @param att_val_len Length of the value to be written as passed in the event @ref EVT_BLUE_GATT_WRITE_PERMIT_REQ.
@@ -837,10 +837,10 @@ typedef __packed struct _evt_att_find_information_resp{
   uint8_t  event_data_length;	/**< Length of following data. */
   uint8_t  format;				/**< The format of the handle_uuid_pair. @arg 1: 16-bit UUIDs @arg 2: 128-bit UUIDs */
   /**
-   *  A sequence of handle-uuid pairs.\n
-   *  @li if format=1, each pair is:\n
-   *  [2 octets for handle, 2 octets for UUIDs] \n
-   *  @li if format=2, each pair is:\n
+   *  A sequence of handle-uuid pairs.\n\r
+   *  @li if format=1, each pair is:\n\r
+   *  [2 octets for handle, 2 octets for UUIDs] \n\r
+   *  @li if format=2, each pair is:\n\r
    *  [2 octets for handle, 16 octets for UUIDs]
    */
   uint8_t  handle_uuid_pair[VARIABLE_SIZE];

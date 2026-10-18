@@ -57,13 +57,13 @@
 
               ret = aci_gap_init_IDB05A1(1, 0, 0x07, &service_handle, &dev_name_char_handle, &appearance_char_handle);
               if(ret){
-                PRINTF("GAP_Init failed.\n");
+                PRINTF("GAP_Init failed.\n\r");
                 reboot();    
               }  
               const char *name = "BlueNRG";  
               ret = aci_gatt_update_char_value(service_handle, dev_name_char_handle, 0, strlen(name), (uint8_t *)name);        
               if(ret){
-                PRINTF("aci_gatt_update_char_value failed.\n");
+                PRINTF("aci_gatt_update_char_value failed.\n\r");
               }  
   *         @endcode
   * @param       role     Bitmap of allowed roles: see @ref gap_roles "GAP roles".
@@ -96,13 +96,13 @@ tBleStatus aci_gap_init_IDB05A1(uint8_t role, uint8_t privacy_enabled,
 
               ret = aci_gap_init_IDB04A1(1, &service_handle, &dev_name_char_handle, &appearance_char_handle);
               if(ret){
-                PRINTF("GAP_Init failed.\n");
+                PRINTF("GAP_Init failed.\n\r");
                 reboot();    
               }  
               const char *name = "BlueNRG";  
               ret = aci_gatt_update_char_value(service_handle, dev_name_char_handle, 0, strlen(name), (uint8_t *)name);        
               if(ret){
-                PRINTF("aci_gatt_update_char_value failed.\n");
+                PRINTF("aci_gatt_update_char_value failed.\n\r");
               }  
   *         @endcode
   * @param       role     One of the allowed roles: @ref GAP_PERIPHERAL_ROLE or @ref GAP_CENTRAL_ROLE. See @ref gap_roles "GAP roles".
@@ -223,10 +223,10 @@ tBleStatus aci_gap_set_limited_discoverable(uint8_t AdvType, uint16_t AdvIntervM
  * @note  The device will be discoverable until the Host issue Aci_Gap_Set_Non_Discoverable command.
  * 		  The Adv_Interval_Min and Adv_Interval_Max parameters are optional. If both are set to 0, the GAP uses
  * 		  the default values for advertising intervals (1.28 s and 2.56 s respectively for IDB04A1).
- *                When using connectable undirected advertising events:\n
+ *                When using connectable undirected advertising events:\n\r
  *                @li Adv_Interval_Min = 30 ms
  *                @li Adv_Interval_Max = 60 ms
- *                \nWhen using non-connectable advertising events or scannable undirected advertising events:\n
+ *                \n\rWhen using non-connectable advertising events or scannable undirected advertising events:\n\r
  *                @li Adv_Interval_Min = 100 ms
  *                @li Adv_Interval_Max = 150 ms
  * 		  Host can set the Local Name, a Service UUID list and the Slave Connection Interval Range. If provided,
@@ -693,26 +693,26 @@ tBleStatus aci_gap_start_general_discovery_proc(uint16_t scanInterval, uint16_t 
  * @param peer_bdaddr Address of the peer device with which a connection has to be established.
  * @param own_bdaddr_type Type of our address used during advertising (PUBLIC_ADDR,STATIC_RANDOM_ADDR).
  * @param conn_min_interval Minimum value for the connection event interval. This shall be less than or
- * 							equal to Conn_Interval_Max.\n
- * 							Range: 0x0006 to 0x0C80\n
- * 							Time = N x 1.25 msec\n
+ * 							equal to Conn_Interval_Max.\n\r
+ * 							Range: 0x0006 to 0x0C80\n\r
+ * 							Time = N x 1.25 msec\n\r
  * 							Time Range: 7.5 msec to 4 seconds
  * @param conn_max_interval Maximum value for the connection event interval. This shall be greater than or
- * 							equal to Conn_Interval_Min.\n
- * 							Range: 0x0006 to 0x0C80\n
- * 							Time = N x 1.25 msec\n
+ * 							equal to Conn_Interval_Min.\n\r
+ * 							Range: 0x0006 to 0x0C80\n\r
+ * 							Time = N x 1.25 msec\n\r
  * 							Time Range: 7.5 msec to 4 seconds
- * @param conn_latency Slave latency for the connection in number of connection events.\n
+ * @param conn_latency Slave latency for the connection in number of connection events.\n\r
  * 						 Range: 0x0000 to 0x01F4
- * @param supervision_timeout Supervision timeout for the LE Link.\n
- * 							  Range: 0x000A to 0x0C80\n
- * 							  Time = N x 10 msec\n
+ * @param supervision_timeout Supervision timeout for the LE Link.\n\r
+ * 							  Range: 0x000A to 0x0C80\n\r
+ * 							  Time = N x 10 msec\n\r
  * 							  Time Range: 100 msec to 32 seconds
- * @param min_conn_length Minimum length of connection needed for the LE connection.\n
- * 						  Range: 0x0000 - 0xFFFF\n
+ * @param min_conn_length Minimum length of connection needed for the LE connection.\n\r
+ * 						  Range: 0x0000 - 0xFFFF\n\r
  * 						  Time = N x 0.625 msec.
- * @param max_conn_length Maximum length of connection needed for the LE connection.\n
- * 						  Range: 0x0000 - 0xFFFF\n
+ * @param max_conn_length Maximum length of connection needed for the LE connection.\n\r
+ * 						  Range: 0x0000 - 0xFFFF\n\r
  * 						  Time = N x 0.625 msec.
  * @return Value indicating success or error code.
  */
@@ -745,30 +745,30 @@ tBleStatus aci_gap_start_name_discovery_proc(uint16_t scanInterval, uint16_t sca
  * 					 For a number N, Time = N x 0.625 msec.
  * @param own_bdaddr_type Type of our address used during advertising (PUBLIC_ADDR,STATIC_RANDOM_ADDR).
  * @param conn_min_interval Minimum value for the connection event interval. This shall be less than or
- * 							equal to Conn_Interval_Max.\n
- * 							Range: 0x0006 to 0x0C80\n
- * 							Time = N x 1.25 msec\n
+ * 							equal to Conn_Interval_Max.\n\r
+ * 							Range: 0x0006 to 0x0C80\n\r
+ * 							Time = N x 1.25 msec\n\r
  * 							Time Range: 7.5 msec to 4 seconds
  * @param conn_max_interval Maximum value for the connection event interval. This shall be greater than or
- * 							equal to Conn_Interval_Min.\n
- * 							Range: 0x0006 to 0x0C80\n
- * 							Time = N x 1.25 msec\n
+ * 							equal to Conn_Interval_Min.\n\r
+ * 							Range: 0x0006 to 0x0C80\n\r
+ * 							Time = N x 1.25 msec\n\r
  * 							Time Range: 7.5 msec to 4 seconds
- * @param conn_latency Slave latency for the connection in number of connection events.\n
+ * @param conn_latency Slave latency for the connection in number of connection events.\n\r
  * 						 Range: 0x0000 to 0x01F4
- * @param supervision_timeout Supervision timeout for the LE Link.\n
- * 							  Range: 0x000A to 0x0C80\n
- * 							  Time = N x 10 msec\n
+ * @param supervision_timeout Supervision timeout for the LE Link.\n\r
+ * 							  Range: 0x000A to 0x0C80\n\r
+ * 							  Time = N x 10 msec\n\r
  * 							  Time Range: 100 msec to 32 seconds
- * @param min_conn_length Minimum length of connection needed for the LE connection.\n
- * 						  Range: 0x0000 - 0xFFFF\n
+ * @param min_conn_length Minimum length of connection needed for the LE connection.\n\r
+ * 						  Range: 0x0000 - 0xFFFF\n\r
  * 						  Time = N x 0.625 msec.
- * @param max_conn_length Maximum length of connection needed for the LE connection.\n
- * 						  Range: 0x0000 - 0xFFFF\n
+ * @param max_conn_length Maximum length of connection needed for the LE connection.\n\r
+ * 						  Range: 0x0000 - 0xFFFF\n\r
  * 						  Time = N x 0.625 msec.
  * @cond BLUENRG
  * @param use_reconn_addr If 1, the provided reconnection address is used as our address during the procedure (the address
- * 						  has been previously notified to the application through @ref EVT_BLUE_GAP_RECONNECTION_ADDRESS event).\n
+ * 						  has been previously notified to the application through @ref EVT_BLUE_GAP_RECONNECTION_ADDRESS event).\n\r
  * @param reconn_addr	Reconnection address used if use_reconn_addr is 1.
  * @endcond
  * @param num_whitelist_entries Number of devices that have to be added to the whitelist.
@@ -825,7 +825,7 @@ tBleStatus aci_gap_start_auto_conn_establish_proc_IDB04A1(uint16_t scanInterval,
  * 						   @arg 0x01: Filter duplicates
  * @cond BLUENRG
  * @param use_reconn_addr If 1, the provided reconnection address is used as our address during the procedure (the address
- * 						  has been previously notified to the application through @ref EVT_BLUE_GAP_RECONNECTION_ADDRESS event).\n
+ * 						  has been previously notified to the application through @ref EVT_BLUE_GAP_RECONNECTION_ADDRESS event).\n\r
  * @param reconn_addr	Reconnection address used if use_reconn_addr is 1.
  * @endcond
  *
@@ -899,26 +899,26 @@ tBleStatus aci_gap_start_selective_conn_establish_proc(uint8_t scan_type, uint16
  * @param peer_bdaddr Address of the peer device with which a connection has to be established.
  * @param own_bdaddr_type Type of our address used during advertising (PUBLIC_ADDR,STATIC_RANDOM_ADDR).
  * @param conn_min_interval Minimum value for the connection event interval. This shall be less than or
- * 							equal to Conn_Interval_Max.\n
- * 							Range: 0x0006 to 0x0C80\n
- * 							Time = N x 1.25 msec\n
+ * 							equal to Conn_Interval_Max.\n\r
+ * 							Range: 0x0006 to 0x0C80\n\r
+ * 							Time = N x 1.25 msec\n\r
  * 							Time Range: 7.5 msec to 4 seconds
  * @param conn_max_interval Maximum value for the connection event interval. This shall be greater than or
- * 							equal to Conn_Interval_Min.\n
- * 							Range: 0x0006 to 0x0C80\n
- * 							Time = N x 1.25 msec\n
+ * 							equal to Conn_Interval_Min.\n\r
+ * 							Range: 0x0006 to 0x0C80\n\r
+ * 							Time = N x 1.25 msec\n\r
  * 							Time Range: 7.5 msec to 4 seconds
- * @param conn_latency Slave latency for the connection in number of connection events.\n
+ * @param conn_latency Slave latency for the connection in number of connection events.\n\r
  * 						 Range: 0x0000 to 0x01F4
- * @param supervision_timeout Supervision timeout for the LE Link.\n
- * 							  Range: 0x000A to 0x0C80\n
- * 							  Time = N x 10 msec\n
+ * @param supervision_timeout Supervision timeout for the LE Link.\n\r
+ * 							  Range: 0x000A to 0x0C80\n\r
+ * 							  Time = N x 10 msec\n\r
  * 							  Time Range: 100 msec to 32 seconds
- * @param min_conn_length Minimum length of connection needed for the LE connection.\n
- * 						  Range: 0x0000 - 0xFFFF\n
+ * @param min_conn_length Minimum length of connection needed for the LE connection.\n\r
+ * 						  Range: 0x0000 - 0xFFFF\n\r
  * 						  Time = N x 0.625 msec.
- * @param max_conn_length Maximum length of connection needed for the LE connection.\n
- * 						  Range: 0x0000 - 0xFFFF\n
+ * @param max_conn_length Maximum length of connection needed for the LE connection.\n\r
+ * 						  Range: 0x0000 - 0xFFFF\n\r
  * 						  Time = N x 0.625 msec.
  * @return Value indicating success or error code.
  */
@@ -945,26 +945,26 @@ tBleStatus aci_gap_terminate_gap_procedure(uint8_t procedure_code);
  * 		  the upper layer.
  * @param conn_handle Handle of the connection for which the update procedure has to be started.
  * @param conn_min_interval Minimum value for the connection event interval. This shall be less than or
- * 							equal to Conn_Interval_Max.\n
- * 							Range: 0x0006 to 0x0C80\n
- * 							Time = N x 1.25 msec\n
+ * 							equal to Conn_Interval_Max.\n\r
+ * 							Range: 0x0006 to 0x0C80\n\r
+ * 							Time = N x 1.25 msec\n\r
  * 							Time Range: 7.5 msec to 4 seconds
  * @param conn_max_interval Maximum value for the connection event interval. This shall be greater than or
- * 							equal to Conn_Interval_Min.\n
- * 							Range: 0x0006 to 0x0C80\n
- * 							Time = N x 1.25 msec\n
+ * 							equal to Conn_Interval_Min.\n\r
+ * 							Range: 0x0006 to 0x0C80\n\r
+ * 							Time = N x 1.25 msec\n\r
  * 							Time Range: 7.5 msec to 4 seconds
- * @param conn_latency Slave latency for the connection in number of connection events.\n
+ * @param conn_latency Slave latency for the connection in number of connection events.\n\r
  * 						 Range: 0x0000 to 0x01F4
- * @param supervision_timeout Supervision timeout for the LE Link.\n
- * 							  Range: 0x000A to 0x0C80\n
- * 							  Time = N x 10 msec\n
+ * @param supervision_timeout Supervision timeout for the LE Link.\n\r
+ * 							  Range: 0x000A to 0x0C80\n\r
+ * 							  Time = N x 10 msec\n\r
  * 							  Time Range: 100 msec to 32 seconds
- * @param min_conn_length Minimum length of connection needed for the LE connection.\n
- * 						  Range: 0x0000 - 0xFFFF\n
+ * @param min_conn_length Minimum length of connection needed for the LE connection.\n\r
+ * 						  Range: 0x0000 - 0xFFFF\n\r
  * 						  Time = N x 0.625 msec.
- * @param max_conn_length Maximum length of connection needed for the LE connection.\n
- * 						  Range: 0x0000 - 0xFFFF\n
+ * @param max_conn_length Maximum length of connection needed for the LE connection.\n\r
+ * 						  Range: 0x0000 - 0xFFFF\n\r
  * 						  Time = N x 0.625 msec.
  * @return Value indicating success or error code.
  */
@@ -1019,7 +1019,7 @@ tBleStatus aci_gap_resolve_private_address_IDB04A1(const tBDAddr private_address
  *        for(int i = 0; i < num_devices; i+=7){
  *        	uint8_t addr_type = device_list[i];
  *        	uint8_t addr = device_list[i+1];
- *        	printf("Type: %d, Addr: %02X%02X%02X%02X%02X%02X\n",addr_type,addr[5],addr[4],addr[3],addr[2],addr[1],addr[0]);
+ *        	printf("Type: %d, Addr: %02X%02X%02X%02X%02X%02X\n\r",addr_type,addr[5],addr[4],addr[3],addr[2],addr[1],addr[0]);
  *        }
  *        @endcode
  *
@@ -1133,8 +1133,8 @@ tBleStatus aci_gap_is_device_bonded(uint8_t peer_address_type, const tBDAddr pee
 typedef __packed struct _evt_gap_pairing_cmplt{
   uint16_t conn_handle; /**< Connection handle on which the pairing procedure completed */
   /**
-   * 0x00: Pairing Success. Pairing with a remote device was successful\n
-   * 0x01: Pairing Timeout. The SMP timeout has elapsed and no further SMP commands will be processed until reconnection\n
+   * 0x00: Pairing Success. Pairing with a remote device was successful\n\r
+   * 0x01: Pairing Timeout. The SMP timeout has elapsed and no further SMP commands will be processed until reconnection\n\r
    * 0x02: Pairing Failed. The pairing failed with the remote device.
    */
   uint8_t  status;
@@ -1207,10 +1207,10 @@ typedef __packed struct _evt_gap_procedure_complete{
    */
   uint8_t status;
   /**
-   * Procedure specific data.\n
-   * @li For Name Discovery Procedure:\n
+   * Procedure specific data.\n\r
+   * @li For Name Discovery Procedure:\n\r
    * the name of the peer device if the procedure completed successfully.
-   * @li For General Connection Establishment Procedure:\n
+   * @li For General Connection Establishment Procedure:\n\r
    * The reconnection address written to the peripheral device if the peripheral is privacy enabled
    */
   uint8_t data[VARIABLE_SIZE];

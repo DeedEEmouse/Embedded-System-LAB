@@ -4455,7 +4455,7 @@ TCB_t *pxTCB;
 				pcWriteBuffer = prvWriteNameToBuffer( pcWriteBuffer, pxTaskStatusArray[ x ].pcTaskName );
 
 				/* Write the rest of the string. */
-				sprintf( pcWriteBuffer, "\t%c\t%u\t%u\t%u\r\n", cStatus, ( unsigned int ) pxTaskStatusArray[ x ].uxCurrentPriority, ( unsigned int ) pxTaskStatusArray[ x ].usStackHighWaterMark, ( unsigned int ) pxTaskStatusArray[ x ].xTaskNumber ); /*lint !e586 sprintf() allowed as this is compiled with many compilers and this is a utility function only - not part of the core kernel implementation. */
+				sprintf( pcWriteBuffer, "\t%c\t%u\t%u\t%u\r\n\r", cStatus, ( unsigned int ) pxTaskStatusArray[ x ].uxCurrentPriority, ( unsigned int ) pxTaskStatusArray[ x ].usStackHighWaterMark, ( unsigned int ) pxTaskStatusArray[ x ].xTaskNumber ); /*lint !e586 sprintf() allowed as this is compiled with many compilers and this is a utility function only - not part of the core kernel implementation. */
 				pcWriteBuffer += strlen( pcWriteBuffer ); /*lint !e9016 Pointer arithmetic ok on char pointers especially as in this case where it best denotes the intent of the code. */
 			}
 
@@ -4551,13 +4551,13 @@ TCB_t *pxTCB;
 					{
 						#ifdef portLU_PRINTF_SPECIFIER_REQUIRED
 						{
-							sprintf( pcWriteBuffer, "\t%lu\t\t%lu%%\r\n", pxTaskStatusArray[ x ].ulRunTimeCounter, ulStatsAsPercentage );
+							sprintf( pcWriteBuffer, "\t%lu\t\t%lu%%\r\n\r", pxTaskStatusArray[ x ].ulRunTimeCounter, ulStatsAsPercentage );
 						}
 						#else
 						{
 							/* sizeof( int ) == sizeof( long ) so a smaller
 							printf() library can be used. */
-							sprintf( pcWriteBuffer, "\t%u\t\t%u%%\r\n", ( unsigned int ) pxTaskStatusArray[ x ].ulRunTimeCounter, ( unsigned int ) ulStatsAsPercentage ); /*lint !e586 sprintf() allowed as this is compiled with many compilers and this is a utility function only - not part of the core kernel implementation. */
+							sprintf( pcWriteBuffer, "\t%u\t\t%u%%\r\n\r", ( unsigned int ) pxTaskStatusArray[ x ].ulRunTimeCounter, ( unsigned int ) ulStatsAsPercentage ); /*lint !e586 sprintf() allowed as this is compiled with many compilers and this is a utility function only - not part of the core kernel implementation. */
 						}
 						#endif
 					}
@@ -4567,13 +4567,13 @@ TCB_t *pxTCB;
 						consumed less than 1% of the total run time. */
 						#ifdef portLU_PRINTF_SPECIFIER_REQUIRED
 						{
-							sprintf( pcWriteBuffer, "\t%lu\t\t<1%%\r\n", pxTaskStatusArray[ x ].ulRunTimeCounter );
+							sprintf( pcWriteBuffer, "\t%lu\t\t<1%%\r\n\r", pxTaskStatusArray[ x ].ulRunTimeCounter );
 						}
 						#else
 						{
 							/* sizeof( int ) == sizeof( long ) so a smaller
 							printf() library can be used. */
-							sprintf( pcWriteBuffer, "\t%u\t\t<1%%\r\n", ( unsigned int ) pxTaskStatusArray[ x ].ulRunTimeCounter ); /*lint !e586 sprintf() allowed as this is compiled with many compilers and this is a utility function only - not part of the core kernel implementation. */
+							sprintf( pcWriteBuffer, "\t%u\t\t<1%%\r\n\r", ( unsigned int ) pxTaskStatusArray[ x ].ulRunTimeCounter ); /*lint !e586 sprintf() allowed as this is compiled with many compilers and this is a utility function only - not part of the core kernel implementation. */
 						}
 						#endif
 					}

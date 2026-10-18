@@ -45,7 +45,7 @@ tBleStatus aci_hal_get_fw_build_number(uint16_t *build_number);
 /**
  * @brief This command writes a value to a low level configure data structure.
  * @note  It is useful to setup directly some low level parameters for the system at runtime.
- * @param offset Offset in the data structure. The starting member in the data structure will have an offset 0.\n
+ * @param offset Offset in the data structure. The starting member in the data structure will have an offset 0.\n\r
  * 				 See @ref Config_vals.
  *
  * @param len Length of data to be written
@@ -58,7 +58,7 @@ tBleStatus aci_hal_write_config_data(uint8_t offset,
 /**
  * @brief This command requests the value in the low level configure data structure.
  *        The number of read bytes changes for different Offset.
- * @param offset Offset in the data structure. The starting member in the data structure will have an offset 0.\n
+ * @param offset Offset in the data structure. The starting member in the data structure will have an offset 0.\n\r
  * 				 See @ref Config_vals.
  * @param data_len Length of the data buffer
  * @param[out] data_len_out_p length of the data returned by the read.
@@ -78,7 +78,7 @@ tBleStatus aci_hal_read_config_data(uint8_t offset, uint16_t data_len, uint8_t *
  *        command to observe the signal strength changing. The system will keep the last received
  *        TX power level from the command, i.e. the 2nd command overwrites the previous TX power
  *        level. The new TX power level remains until another Set TX Power command, or the system
- *        reboots.\n
+ *        reboots.\n\r
  * @param en_high_power Can be only 0 or 1. Set high power bit on or off. It is strongly adviced to use the
  * 						right value, depending on the selected hardware configuration for the RF network:
  * 						normal mode or high power mode.
@@ -91,7 +91,7 @@ tBleStatus aci_hal_set_tx_power_level(uint8_t en_high_power, uint8_t pa_level);
  * @brief This command returns the number of packets sent in Direct Test Mode.
  * @note  When the Direct TX test is started, a 32-bit counter is used to count how many packets
  *        have been transmitted. This command can be used to check how many packets have been sent
- *        during the Direct TX test.\n
+ *        during the Direct TX test.\n\r
  *        The counter starts from 0 and counts upwards. The counter can wrap and start from 0 again.
  *        The counter is not cleared until the next Direct TX test starts.
  * @param[out] number_of_packets Number of packets sent during the last Direct TX test.
@@ -251,7 +251,7 @@ typedef __packed struct _evt_hal_crash_info{
 #define CONFIG_DATA_RANDOM_ADDRESS          (0x80) /**< Stored static random address. Read-only. */
 
 /**
- * Select the BlueNRG mode configurations.\n
+ * Select the BlueNRG mode configurations.\n\r
  * @li Mode 1: slave or master, 1 connection, RAM1 only (small GATT DB)
  * @li Mode 2: slave or master, 1 connection, RAM1 and RAM2 (large GATT DB)
  * @li Mode 3: master/slave, 8 connections, RAM1 and RAM2.

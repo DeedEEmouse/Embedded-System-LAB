@@ -227,7 +227,7 @@ int8_t SPI_WIFI_ResetModule(void)
   WIFI_DISABLE_NSS();
 
   if ((Prompt[0] != 0x15) || (Prompt[1] != 0x15) || (Prompt[2] != '\r') ||
-      (Prompt[3] != '\n') || (Prompt[4] != '>') || (Prompt[5] != ' '))
+      (Prompt[3] != '\n\r') || (Prompt[4] != '>') || (Prompt[5] != ' '))
   {
     return -1;
   }
@@ -418,7 +418,7 @@ int16_t SPI_WIFI_SendData(const uint8_t *pdata, uint16_t len, uint32_t timeout)
   if (len & 1)
   {
     Padding[0] = pdata[len - 1];
-    Padding[1] = '\n';
+    Padding[1] = '\n\r';
 
     spi_tx_event=1;
     if (HAL_SPI_Transmit_IT(&hspi, Padding, 1) != HAL_OK)

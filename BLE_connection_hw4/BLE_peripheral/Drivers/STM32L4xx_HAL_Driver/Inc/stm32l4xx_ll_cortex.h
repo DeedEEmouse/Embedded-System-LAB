@@ -543,14 +543,14 @@ __STATIC_INLINE void LL_MPU_EnableRegion(uint32_t Region)
 
 /**
   * @brief  Configure and enable a region
-  * @rmtoll MPU_RNR      REGION        LL_MPU_ConfigRegion\n
-  *         MPU_RBAR     REGION        LL_MPU_ConfigRegion\n
-  *         MPU_RBAR     ADDR          LL_MPU_ConfigRegion\n
-  *         MPU_RASR     XN            LL_MPU_ConfigRegion\n
-  *         MPU_RASR     AP            LL_MPU_ConfigRegion\n
-  *         MPU_RASR     S             LL_MPU_ConfigRegion\n
-  *         MPU_RASR     C             LL_MPU_ConfigRegion\n
-  *         MPU_RASR     B             LL_MPU_ConfigRegion\n
+  * @rmtoll MPU_RNR      REGION        LL_MPU_ConfigRegion\n\r
+  *         MPU_RBAR     REGION        LL_MPU_ConfigRegion\n\r
+  *         MPU_RBAR     ADDR          LL_MPU_ConfigRegion\n\r
+  *         MPU_RASR     XN            LL_MPU_ConfigRegion\n\r
+  *         MPU_RASR     AP            LL_MPU_ConfigRegion\n\r
+  *         MPU_RASR     S             LL_MPU_ConfigRegion\n\r
+  *         MPU_RASR     C             LL_MPU_ConfigRegion\n\r
+  *         MPU_RASR     B             LL_MPU_ConfigRegion\n\r
   *         MPU_RASR     SIZE          LL_MPU_ConfigRegion
   * @param  Region This parameter can be one of the following values:
   *         @arg @ref LL_MPU_REGION_NUMBER0
@@ -591,7 +591,7 @@ __STATIC_INLINE void LL_MPU_ConfigRegion(uint32_t Region, uint32_t SubRegionDisa
 
 /**
   * @brief  Disable a region
-  * @rmtoll MPU_RNR      REGION        LL_MPU_DisableRegion\n
+  * @rmtoll MPU_RNR      REGION        LL_MPU_DisableRegion\n\r
   *         MPU_RASR     ENABLE        LL_MPU_DisableRegion
   * @param  Region This parameter can be one of the following values:
   *         @arg @ref LL_MPU_REGION_NUMBER0

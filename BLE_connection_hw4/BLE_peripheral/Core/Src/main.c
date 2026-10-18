@@ -25,6 +25,8 @@
 /* USER CODE BEGIN Includes */
 #include "bluenrg_conf.h"
 #include "stm32l475e_iot01_accelero.h"
+#include "gatt_db.h"
+#include <stdbool.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,7 +95,10 @@ void StartTaskACC(void *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-volatile uint32_t acc_frequency_hz = 10;
+volatile uint32_t acc_frequency_hz = 2;
+extern volatile bool acc_data_ready;
+
+volatile AxesRaw_t latest_acc;
 /* USER CODE END 0 */
 
 /**
@@ -105,49 +110,10 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
 
-	/* TODO 實作 TASK_ACC，依指定頻率讀取三軸加速度
-	 * TODO 實作 TASK_BLE，持續呼叫 MX_BlueNRG_MS_Process()
-	 * TODO 初始化 LSM6DSL，檢查 BSP_ACCELERO_Init() 回傳值
-	 *
-	 * TODO 更改 Makefile 讓 accelero 能被 compile
-	 * TODO 將 stm32l475e_iot01.c 併入 b_l475e_iot01a1.c 或可能根本不用改
+	/* TODO 實作 TASK_BLE，持續呼叫 MX_BlueNRG_MS_Process()
 	 * TODO 加一個更改頻率的 service 並選我們要的 characteristic (在gatt_db.c中)
 	 * */
 
-	/* AI 的建議
-	 * 建議的完整 TODO
-		RTOS
-		- 建立並完成 TASK_BLE
-		- 建立並完成 TASK_ACC
-		- 決定 BLE stack 的 mutex/queue 同步方式
-		- 實作可動態變更的取樣週期
-		Accelerometer
-		- 確認 accelerometer sources 有被編譯
-		- 確認 include paths
-		- 確認 SENSOR_IO_* 使用 I2C2
-		- 呼叫 BSP_ACCELERO_Init()
-		- 驗證 WHO_AM_I == 0x6A
-		- 使用 BSP_ACCELERO_GetXYZ() 讀取真實資料
-		BLE database
-		- 找到既有 acceleration characteristic
-		- 新增 sampling-frequency characteristic
-		- 設定 write property 和 event mask
-		- 保存 frequency characteristic handle
-		- 調整 service attribute record 數量
-		- 暫時不要刪除其他 characteristic
-		BLE event
-		- 處理 GAP connection
-		- 處理 GAP disconnection
-		- 處理 frequency characteristic write
-		- 解析並驗證 frequency
-		- 將新頻率交給 TASK_ACC
-		Data notification
-		- 不要使用 Environmental_Update() 傳 acceleration
-		- 找到既有 acceleration update API
-		- 只在 BLE 已連線且 notification 已啟用時傳送
-		- 實際晃動板子，確認 X/Y/Z 會對應改變
-		- 驗證 notification 速率會隨寫入的 frequency 改變
-	*/
 
   /* USER CODE END 1 */
 
@@ -164,7 +130,6 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -175,13 +140,8 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_PCD_Init();
   MX_BlueNRG_MS_Init();
+
   /* USER CODE BEGIN 2 */
-
-  ACCELERO_StatusTypeDef status;
-  status = BSP_ACCELERO_Init();
-  int16_t xyz[3] = {0};
-
-
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -228,18 +188,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
-
-	if (status == ACCELERO_OK)
-	{
-	  BSP_ACCELERO_AccGetXYZ(xyz);
-	  PRINTF("ACC X=%d Y=%d Z=%d\r\n",
-			 xyz[0],
-			 xyz[1],
-			 xyz[2]);
-	}
-	osDelay(500);
   }
   /* USER CODE END 3 */
 }
@@ -698,7 +647,7 @@ void StartTaskBLE(void *argument)
   for(;;)
   {
 	MX_BlueNRG_MS_Process();
-    osDelay(1);
+    osDelay(5);
   }
   /* USER CODE END 5 */
 }
@@ -714,33 +663,39 @@ void StartTaskACC(void *argument)
 {
   /* USER CODE BEGIN StartTaskACC */
   int16_t xyz[3] = {0};
-  uint32_t frequency;
+  uint32_t freq;
   uint32_t period_ms;
   ACCELERO_StatusTypeDef status;
 
   status = BSP_ACCELERO_Init();
 
-  PRINTF("ACC init status = %d\r\n", status);
+  PRINTF("ACC init status = %d\r\n\r", status);
   /* Infinite loop */
   for (;;)
   {
-      frequency = acc_frequency_hz;
+      freq = acc_frequency_hz;
 
-      if (frequency == 0)
+      if (freq == 0)
       {
-          frequency = 1;
+          freq = 1;
       }
 
-      period_ms = 1000 / frequency;
+      period_ms = 1000 / freq;
+      BSP_LED_Toggle(LED2);
 
-      BSP_ACCELERO_AccGetXYZ(acc);
+      BSP_ACCELERO_AccGetXYZ(xyz);
+      latest_acc.AXIS_X = xyz[0];
+      latest_acc.AXIS_Y = xyz[1];
+      latest_acc.AXIS_Z = xyz[2];
 
-      printf(
-          "X=%d, Y=%d, Z=%d\r\n",
-          acc[0],
-          acc[1],
-          acc[2]
-      );
+      acc_data_ready = true;
+
+      /*printf(
+          "X=%ld, Y=%ld, Z=%ld \r\n\r",
+		  latest_acc.AXIS_X,
+		  latest_acc.AXIS_Y,
+		  latest_acc.AXIS_Z
+      );*/
 
       osDelay(period_ms);
   }
@@ -795,7 +750,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     ex: printf("Wrong parameters value: file %s on line %d\r\n\r", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

@@ -399,7 +399,7 @@ __STATIC_INLINE uint32_t LL_SPI_IsEnabled(const SPI_TypeDef *SPIx)
 /**
   * @brief  Set SPI operation mode to Master or Slave
   * @note   This bit should not be changed when communication is ongoing.
-  * @rmtoll CR1          MSTR          LL_SPI_SetMode\n
+  * @rmtoll CR1          MSTR          LL_SPI_SetMode\n\r
   *         CR1          SSI           LL_SPI_SetMode
   * @param  SPIx SPI Instance
   * @param  Mode This parameter can be one of the following values:
@@ -414,7 +414,7 @@ __STATIC_INLINE void LL_SPI_SetMode(SPI_TypeDef *SPIx, uint32_t Mode)
 
 /**
   * @brief  Get SPI operation mode (Master or Slave)
-  * @rmtoll CR1          MSTR          LL_SPI_GetMode\n
+  * @rmtoll CR1          MSTR          LL_SPI_GetMode\n\r
   *         CR1          SSI           LL_SPI_GetMode
   * @param  SPIx SPI Instance
   * @retval Returned value can be one of the following values:
@@ -584,8 +584,8 @@ __STATIC_INLINE uint32_t LL_SPI_GetTransferBitOrder(const SPI_TypeDef *SPIx)
   * @brief  Set transfer direction mode
   * @note   For Half-Duplex mode, Rx Direction is set by default.
   *         In master mode, the MOSI pin is used and in slave mode, the MISO pin is used for Half-Duplex.
-  * @rmtoll CR1          RXONLY        LL_SPI_SetTransferDirection\n
-  *         CR1          BIDIMODE      LL_SPI_SetTransferDirection\n
+  * @rmtoll CR1          RXONLY        LL_SPI_SetTransferDirection\n\r
+  *         CR1          BIDIMODE      LL_SPI_SetTransferDirection\n\r
   *         CR1          BIDIOE        LL_SPI_SetTransferDirection
   * @param  SPIx SPI Instance
   * @param  TransferDirection This parameter can be one of the following values:
@@ -602,8 +602,8 @@ __STATIC_INLINE void LL_SPI_SetTransferDirection(SPI_TypeDef *SPIx, uint32_t Tra
 
 /**
   * @brief  Get transfer direction mode
-  * @rmtoll CR1          RXONLY        LL_SPI_GetTransferDirection\n
-  *         CR1          BIDIMODE      LL_SPI_GetTransferDirection\n
+  * @rmtoll CR1          RXONLY        LL_SPI_GetTransferDirection\n\r
+  *         CR1          BIDIMODE      LL_SPI_GetTransferDirection\n\r
   *         CR1          BIDIOE        LL_SPI_GetTransferDirection
   * @param  SPIx SPI Instance
   * @retval Returned value can be one of the following values:
@@ -833,7 +833,7 @@ __STATIC_INLINE uint32_t LL_SPI_GetTxCRC(const SPI_TypeDef *SPIx)
 /**
   * @brief  Set NSS mode
   * @note   LL_SPI_NSS_SOFT Mode is not used in SPI TI mode.
-  * @rmtoll CR1          SSM           LL_SPI_SetNSSMode\n
+  * @rmtoll CR1          SSM           LL_SPI_SetNSSMode\n\r
   * @rmtoll CR2          SSOE          LL_SPI_SetNSSMode
   * @param  SPIx SPI Instance
   * @param  NSS This parameter can be one of the following values:
@@ -850,7 +850,7 @@ __STATIC_INLINE void LL_SPI_SetNSSMode(SPI_TypeDef *SPIx, uint32_t NSS)
 
 /**
   * @brief  Get NSS mode
-  * @rmtoll CR1          SSM           LL_SPI_GetNSSMode\n
+  * @rmtoll CR1          SSM           LL_SPI_GetNSSMode\n\r
   * @rmtoll CR2          SSOE          LL_SPI_GetNSSMode
   * @param  SPIx SPI Instance
   * @retval Returned value can be one of the following values:

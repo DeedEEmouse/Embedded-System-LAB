@@ -79,6 +79,8 @@ tBleStatus BlueMS_Environmental_Update(int32_t press, int16_t temp);
 tBleStatus Acc_Update(AxesRaw_t *x_axes, AxesRaw_t *g_axes, AxesRaw_t *m_axes);
 tBleStatus Quat_Update(AxesRaw_t *q_axes);
 
+tBleStatus AccXYZ_Update(int16_t x, int16_t y, int16_t z); // 我們加的
+
 extern uint8_t Services_Max_Attribute_Records[];
 
 #endif /* GATT_DB_H */

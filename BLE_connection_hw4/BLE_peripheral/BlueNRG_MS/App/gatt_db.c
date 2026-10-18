@@ -50,7 +50,11 @@ do {\
 #define COPY_SW_SENS_W2ST_SERVICE_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0x00,0x00,0x00,0x00,0x00,0x02,0x11,0xe1,0x9a,0xb4,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #define COPY_QUATERNIONS_W2ST_CHAR_UUID(uuid_struct)   COPY_UUID_128(uuid_struct,0x00,0x00,0x01,0x00,0x00,0x01,0x11,0xe1,0xac,0x36,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
-uint16_t HWServW2STHandle, EnvironmentalCharHandle, AccGyroMagCharHandle;
+// 我們的 characteristic a, b UUID
+#define COPY_ACC_XYZ_W2ST_CHAR_UUID(uuid_struct)       COPY_UUID_128(uuid_struct,0xab,0xcd,0xef,0x00,0x00,0x67,0x47,0x67,0xa7,0x67,0x67,0x67,0x67,0x67,0x67,0x66)
+#define COPY_ACC_FREQUENCY_W2ST_CHAR_UUID(uuid_struct) COPY_UUID_128(uuid_struct,0xab,0xcd,0xef,0x00,0x00,0x67,0x47,0x67,0xa7,0x67,0x67,0x67,0x67,0x67,0x67,0x67)
+
+uint16_t HWServW2STHandle, EnvironmentalCharHandle, AccGyroMagCharHandle,  AccXYZCharHandle, AccFrequencyCharHandle;
 uint16_t SWServW2STHandle, QuaternionsCharHandle;
 
 /* UUIDS */
@@ -60,6 +64,8 @@ Char_UUID_t char_uuid;
 extern AxesRaw_t x_axes;
 extern AxesRaw_t g_axes;
 extern AxesRaw_t m_axes;
+
+extern volatile uint32_t acc_frequency_hz;
 
 extern uint16_t connection_handle;
 extern uint32_t start_time;
@@ -82,7 +88,7 @@ tBleStatus Add_HWServW2ST_Service(void)
   if (ret != BLE_STATUS_SUCCESS)
     return BLE_STATUS_ERROR;
 
-  /* Fill the Environmental BLE Characteristc */
+  /* Fill the Environmental BLE Characteristic */
   COPY_ENVIRONMENTAL_W2ST_CHAR_UUID(uuid);
   uuid[14] |= 0x04; /* One Temperature value*/
   uuid[14] |= 0x10; /* Pressure value*/
@@ -96,7 +102,9 @@ tBleStatus Add_HWServW2ST_Service(void)
   if (ret != BLE_STATUS_SUCCESS)
     return BLE_STATUS_ERROR;
 
-  /* Fill the AccGyroMag BLE Characteristc */
+
+
+  /* Fill the AccGyroMag BLE Characteristic */
   COPY_ACC_GYRO_MAG_W2ST_CHAR_UUID(uuid);
   BLUENRG_memcpy(&char_uuid.Char_UUID_128, uuid, 16);
   ret =  aci_gatt_add_char(HWServW2STHandle, UUID_TYPE_128, char_uuid.Char_UUID_128,
@@ -108,6 +116,36 @@ tBleStatus Add_HWServW2ST_Service(void)
   if (ret != BLE_STATUS_SUCCESS)
     return BLE_STATUS_ERROR;
 
+
+
+  /* This is our frequency Characteristic (a)*/
+  COPY_ACC_XYZ_W2ST_CHAR_UUID(uuid);
+  BLUENRG_memcpy(&char_uuid.Char_UUID_128, uuid, 16);
+  ret = aci_gatt_add_char(HWServW2STHandle, UUID_TYPE_128, char_uuid.Char_UUID_128,
+						  6,
+						  CHAR_PROP_READ | CHAR_PROP_NOTIFY,
+						  ATTR_PERMISSION_NONE,
+						  GATT_DONT_NOTIFY_EVENTS,
+						  16, 0, &AccXYZCharHandle);
+  if (ret != BLE_STATUS_SUCCESS)
+    return BLE_STATUS_ERROR;
+
+
+
+  /* This is our frequency Characteristic (b)*/
+  COPY_ACC_FREQUENCY_W2ST_CHAR_UUID(uuid);
+  BLUENRG_memcpy(&char_uuid.Char_UUID_128, uuid, 16);
+  ret =  aci_gatt_add_char(HWServW2STHandle, UUID_TYPE_128, char_uuid.Char_UUID_128,
+                           2,
+                           CHAR_PROP_WRITE,
+                           ATTR_PERMISSION_NONE,
+                           GATT_NOTIFY_ATTRIBUTE_WRITE,
+                           16, 0, &AccFrequencyCharHandle);
+  if (ret != BLE_STATUS_SUCCESS)
+    return BLE_STATUS_ERROR;
+
+
+
   return BLE_STATUS_SUCCESS;
 }
 
@@ -116,6 +154,32 @@ tBleStatus Add_HWServW2ST_Service(void)
  * @param  None
  * @retval tBleStatus Status
  */
+tBleStatus AccXYZ_Update(int16_t x, int16_t y, int16_t z)
+{
+    uint8_t buff[6];
+    tBleStatus ret;
+
+    HOST_TO_LE_16(buff, x);
+    HOST_TO_LE_16(buff + 2, y);
+    HOST_TO_LE_16(buff + 4, z);
+
+    ret = aci_gatt_update_char_value(
+        HWServW2STHandle,
+        AccXYZCharHandle,
+        0,
+        sizeof(buff),
+        buff
+    );
+
+    if (ret != BLE_STATUS_SUCCESS)
+        return BLE_STATUS_ERROR;
+
+    return BLE_STATUS_SUCCESS;
+}
+
+
+
+
 
 
 tBleStatus Add_SWServW2ST_Service(void)
@@ -179,7 +243,7 @@ tBleStatus Acc_Update(AxesRaw_t *x_axes, AxesRaw_t *g_axes, AxesRaw_t *m_axes)
   ret = aci_gatt_update_char_value(HWServW2STHandle, AccGyroMagCharHandle,
 				   0, 2+2*3*3, buff);
   if (ret != BLE_STATUS_SUCCESS){
-    PRINTF("Error while updating Acceleration characteristic: 0x%02X\n",ret) ;
+    PRINTF("Error while updating Acceleration characteristic: 0x%02X\n\r",ret) ;
     return BLE_STATUS_ERROR ;
   }
 
@@ -229,7 +293,7 @@ tBleStatus Quat_Update(AxesRaw_t *data)
   ret = aci_gatt_update_char_value(SWServW2STHandle, QuaternionsCharHandle,
 				   0, 2+6*SEND_N_QUATERNIONS, buff);
   if (ret != BLE_STATUS_SUCCESS){
-    PRINTF("Error while updating Sensor Fusion characteristic: 0x%02X\n",ret) ;
+    PRINTF("Error while updating Sensor Fusion characteristic: 0x%02X\n\r",ret) ;
     return BLE_STATUS_ERROR ;
   }
 
@@ -263,7 +327,7 @@ void Read_Request_CB(uint16_t handle)
     ret = aci_gatt_allow_read(connection_handle);
     if (ret != BLE_STATUS_SUCCESS)
     {
-      PRINTF("aci_gatt_allow_read() failed: 0x%02x\r\n", ret);
+      PRINTF("aci_gatt_allow_read() failed: 0x%02x\r\n\r", ret);
     }
   }
 }
@@ -281,7 +345,7 @@ tBleStatus BlueMS_Environmental_Update(int32_t press, int16_t temp)
                                    0, 8, buff);
 
   if (ret != BLE_STATUS_SUCCESS){
-    PRINTF("Error while updating TEMP characteristic: 0x%04X\n",ret) ;
+    PRINTF("Error while updating TEMP characteristic: 0x%04X\n\r",ret) ;
     return BLE_STATUS_ERROR ;
   }
 

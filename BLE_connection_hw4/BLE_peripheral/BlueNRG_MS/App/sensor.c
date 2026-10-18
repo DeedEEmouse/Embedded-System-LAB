@@ -53,11 +53,17 @@ AxesRaw_t g_axes = {0, 0, 0};
 AxesRaw_t m_axes = {0, 0, 0};
 AxesRaw_t q_axes[SEND_N_QUATERNIONS] = {{0, 0, 0}};
 
+// 我們的頻率 要被寫入的
+extern volatile uint32_t acc_frequency_hz;
+extern uint16_t AccFrequencyCharHandle;
+
+
 /* Private function prototypes -----------------------------------------------*/
 void GAP_DisconnectionComplete_CB(void);
 void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle);
-
+static void Frequency_Write_CB(uint16_t attr_handle, uint8_t data_length, uint8_t *att_data);
 /* Private functions ---------------------------------------------------------*/
+
 
 /*******************************************************************************
  * Function Name  : Set_DeviceConnectable.
@@ -92,7 +98,7 @@ void Set_DeviceConnectable(void)
 
   hci_le_set_scan_resp_data(0, NULL);
 
-  PRINTF("Set General Discoverable Mode.\n");
+  PRINTF("Set General Discoverable Mode.\n\r");
 
   ret = aci_gap_set_discoverable(ADV_DATA_TYPE,
                                 (ADV_INTERVAL_MIN_MS*1000)/625,(ADV_INTERVAL_MAX_MS*1000)/625,
@@ -103,10 +109,10 @@ void Set_DeviceConnectable(void)
 
   if(ret != BLE_STATUS_SUCCESS)
   {
-    PRINTF("aci_gap_set_discoverable() failed: 0x%02x\r\n", ret);
+    PRINTF("aci_gap_set_discoverable() failed: 0x%02x\r\n\r", ret);
   }
   else
-    PRINTF("aci_gap_set_discoverable() --> SUCCESS\r\n");
+    PRINTF("aci_gap_set_discoverable() --> SUCCESS\r\n\r");
 }
 
 /**
@@ -161,11 +167,44 @@ void user_notify(void * pData)
         }
         break;
 
-       /*TODO : 加一個event 是藍芽要執行寫frequency的*/
+       /*TODO - Done : 加一個event 是藍芽要執行寫frequency的*/
+
+      case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+      {
+          if (bnrg_expansion_board == IDB05A1)
+          {
+              evt_gatt_attr_modified_IDB05A1 *am =
+                  (void *)blue_evt->data;
+
+              Frequency_Write_CB(
+                  am->attr_handle,
+                  am->data_length,
+                  am->att_data
+              );
+          }
+          else
+          {
+              evt_gatt_attr_modified_IDB04A1 *am =
+                  (void *)blue_evt->data;
+
+              Frequency_Write_CB(
+                  am->attr_handle,
+                  am->data_length,
+                  am->att_data
+              );
+          }
+      }
+      break;
+
+
+
       }
 
     }
     break;
+
+
+
   }
 }
 
@@ -177,7 +216,7 @@ void user_notify(void * pData)
 void GAP_DisconnectionComplete_CB(void)
 {
   connected = FALSE;
-  PRINTF("Disconnected\n");
+  PRINTF("Disconnected\n\r");
   /* Make the device connectable again. */
   set_connectable = TRUE;
   notification_enabled = FALSE;
@@ -198,5 +237,34 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle)
   for(uint32_t i = 5; i > 0; i--){
     PRINTF("%02X-", addr[i]);
   }
-  PRINTF("%02X\n", addr[0]);
+  PRINTF("%02X\n\r", addr[0]);
+}
+
+
+// 我們寫入頻率的程式 處理 little endian
+static void Frequency_Write_CB(uint16_t attr_handle,
+                               uint8_t data_length,
+                               uint8_t *att_data)
+{
+    uint16_t new_frequency;
+
+    if (attr_handle != AccFrequencyCharHandle + 1)
+        return;
+
+    if (data_length != 2)
+        return;
+
+    new_frequency =
+        (uint16_t)att_data[0] |
+        ((uint16_t)att_data[1] << 8);
+
+    if (new_frequency >= 1 && new_frequency <= 52)
+    {
+        acc_frequency_hz = new_frequency;
+        PRINTF("Frequency changed to %u Hz\r\n\r", new_frequency);
+    }
+    else
+    {
+        PRINTF("Invalid frequency: %u Hz\r\n\r", new_frequency);
+    }
 }

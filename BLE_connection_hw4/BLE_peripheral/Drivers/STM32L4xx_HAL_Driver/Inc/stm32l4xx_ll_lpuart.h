@@ -675,7 +675,7 @@ __STATIC_INLINE uint32_t LL_LPUART_GetRXFIFOThreshold(const USART_TypeDef *LPUAR
 
 /**
   * @brief  Configure TX and RX FIFOs Threshold
-  * @rmtoll CR3          TXFTCFG       LL_LPUART_ConfigFIFOsThreshold\n
+  * @rmtoll CR3          TXFTCFG       LL_LPUART_ConfigFIFOsThreshold\n\r
   *         CR3          RXFTCFG       LL_LPUART_ConfigFIFOsThreshold
   * @param  LPUARTx LPUART Instance
   * @param  TXThreshold This parameter can be one of the following values:
@@ -822,7 +822,7 @@ __STATIC_INLINE void LL_LPUART_DisableDirectionTx(USART_TypeDef *LPUARTx)
 /**
   * @brief  Configure simultaneously enabled/disabled states
   *         of Transmitter and Receiver
-  * @rmtoll CR1          RE            LL_LPUART_SetTransferDirection\n
+  * @rmtoll CR1          RE            LL_LPUART_SetTransferDirection\n\r
   *         CR1          TE            LL_LPUART_SetTransferDirection
   * @param  LPUARTx LPUART Instance
   * @param  TransferDirection This parameter can be one of the following values:
@@ -839,7 +839,7 @@ __STATIC_INLINE void LL_LPUART_SetTransferDirection(USART_TypeDef *LPUARTx, uint
 
 /**
   * @brief  Return enabled/disabled states of Transmitter and Receiver
-  * @rmtoll CR1          RE            LL_LPUART_GetTransferDirection\n
+  * @rmtoll CR1          RE            LL_LPUART_GetTransferDirection\n\r
   *         CR1          TE            LL_LPUART_GetTransferDirection
   * @param  LPUARTx LPUART Instance
   * @retval Returned value can be one of the following values:
@@ -858,7 +858,7 @@ __STATIC_INLINE uint32_t LL_LPUART_GetTransferDirection(const USART_TypeDef *LPU
   * @note   This function selects if hardware parity control (generation and detection) is enabled or disabled.
   *         When the parity control is enabled (Odd or Even), computed parity bit is inserted at the MSB position
   *         (depending on data width) and parity is checked on the received data.
-  * @rmtoll CR1          PS            LL_LPUART_SetParity\n
+  * @rmtoll CR1          PS            LL_LPUART_SetParity\n\r
   *         CR1          PCE           LL_LPUART_SetParity
   * @param  LPUARTx LPUART Instance
   * @param  Parity This parameter can be one of the following values:
@@ -874,7 +874,7 @@ __STATIC_INLINE void LL_LPUART_SetParity(USART_TypeDef *LPUARTx, uint32_t Parity
 
 /**
   * @brief  Return Parity configuration (enabled/disabled and parity mode if enabled)
-  * @rmtoll CR1          PS            LL_LPUART_GetParity\n
+  * @rmtoll CR1          PS            LL_LPUART_GetParity\n\r
   *         CR1          PCE           LL_LPUART_GetParity
   * @param  LPUARTx LPUART Instance
   * @retval Returned value can be one of the following values:
@@ -1058,9 +1058,9 @@ __STATIC_INLINE uint32_t LL_LPUART_GetStopBitsLength(const USART_TypeDef *LPUART
   *         - Data Width configuration using @ref LL_LPUART_SetDataWidth() function
   *         - Parity Control and mode configuration using @ref LL_LPUART_SetParity() function
   *         - Stop bits configuration using @ref LL_LPUART_SetStopBitsLength() function
-  * @rmtoll CR1          PS            LL_LPUART_ConfigCharacter\n
-  *         CR1          PCE           LL_LPUART_ConfigCharacter\n
-  *         CR1          M             LL_LPUART_ConfigCharacter\n
+  * @rmtoll CR1          PS            LL_LPUART_ConfigCharacter\n\r
+  *         CR1          PCE           LL_LPUART_ConfigCharacter\n\r
+  *         CR1          M             LL_LPUART_ConfigCharacter\n\r
   *         CR2          STOP          LL_LPUART_ConfigCharacter
   * @param  LPUARTx LPUART Instance
   * @param  DataWidth This parameter can be one of the following values:
@@ -1239,7 +1239,7 @@ __STATIC_INLINE uint32_t LL_LPUART_GetTransferBitOrder(const USART_TypeDef *LPUA
   *         Mute mode inactive (for example, end of block detection in ModBus protocol).
   *         In this case, the whole received character (8-bit) is compared to the ADD[7:0]
   *         value and CMF flag is set on match)
-  * @rmtoll CR2          ADD           LL_LPUART_ConfigNodeAddress\n
+  * @rmtoll CR2          ADD           LL_LPUART_ConfigNodeAddress\n\r
   *         CR2          ADDM7         LL_LPUART_ConfigNodeAddress
   * @param  LPUARTx LPUART Instance
   * @param  AddressLen This parameter can be one of the following values:
@@ -1328,7 +1328,7 @@ __STATIC_INLINE void LL_LPUART_DisableCTSHWFlowCtrl(USART_TypeDef *LPUARTx)
 
 /**
   * @brief  Configure HW Flow Control mode (both CTS and RTS)
-  * @rmtoll CR3          RTSE          LL_LPUART_SetHWFlowCtrl\n
+  * @rmtoll CR3          RTSE          LL_LPUART_SetHWFlowCtrl\n\r
   *         CR3          CTSE          LL_LPUART_SetHWFlowCtrl
   * @param  LPUARTx LPUART Instance
   * @param  HardwareFlowControl This parameter can be one of the following values:
@@ -1345,7 +1345,7 @@ __STATIC_INLINE void LL_LPUART_SetHWFlowCtrl(USART_TypeDef *LPUARTx, uint32_t Ha
 
 /**
   * @brief  Return HW Flow Control configuration (both CTS and RTS)
-  * @rmtoll CR3          RTSE          LL_LPUART_GetHWFlowCtrl\n
+  * @rmtoll CR3          RTSE          LL_LPUART_GetHWFlowCtrl\n\r
   *         CR3          CTSE          LL_LPUART_GetHWFlowCtrl
   * @param  LPUARTx LPUART Instance
   * @retval Returned value can be one of the following values:
@@ -2714,7 +2714,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledDMADeactOnRxErr(const USART_TypeDef 
 
 /**
   * @brief  Get the LPUART data register address used for DMA transfer
-  * @rmtoll RDR          RDR           LL_LPUART_DMA_GetRegAddr\n
+  * @rmtoll RDR          RDR           LL_LPUART_DMA_GetRegAddr\n\r
   * @rmtoll TDR          TDR           LL_LPUART_DMA_GetRegAddr
   * @param  LPUARTx LPUART Instance
   * @param  Direction This parameter can be one of the following values:

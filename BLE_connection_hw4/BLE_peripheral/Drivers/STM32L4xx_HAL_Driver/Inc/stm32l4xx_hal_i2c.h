@@ -80,28 +80,28 @@ typedef struct
 
 /** @defgroup HAL_state_structure_definition HAL state structure definition
   * @brief  HAL State structure definition
-  * @note  HAL I2C State value coding follow below described bitmap :\n
-  *          b7-b6  Error information\n
-  *             00 : No Error\n
-  *             01 : Abort (Abort user request on going)\n
-  *             10 : Timeout\n
-  *             11 : Error\n
-  *          b5     Peripheral initialization status\n
-  *             0  : Reset (peripheral not initialized)\n
-  *             1  : Init done (peripheral initialized and ready to use. HAL I2C Init function called)\n
-  *          b4     (not used)\n
-  *             x  : Should be set to 0\n
-  *          b3\n
-  *             0  : Ready or Busy (No Listen mode ongoing)\n
-  *             1  : Listen (peripheral in Address Listen Mode)\n
-  *          b2     Intrinsic process state\n
-  *             0  : Ready\n
-  *             1  : Busy (peripheral busy with some configuration or internal operations)\n
-  *          b1     Rx state\n
-  *             0  : Ready (no Rx operation ongoing)\n
-  *             1  : Busy (Rx operation ongoing)\n
-  *          b0     Tx state\n
-  *             0  : Ready (no Tx operation ongoing)\n
+  * @note  HAL I2C State value coding follow below described bitmap :\n\r
+  *          b7-b6  Error information\n\r
+  *             00 : No Error\n\r
+  *             01 : Abort (Abort user request on going)\n\r
+  *             10 : Timeout\n\r
+  *             11 : Error\n\r
+  *          b5     Peripheral initialization status\n\r
+  *             0  : Reset (peripheral not initialized)\n\r
+  *             1  : Init done (peripheral initialized and ready to use. HAL I2C Init function called)\n\r
+  *          b4     (not used)\n\r
+  *             x  : Should be set to 0\n\r
+  *          b3\n\r
+  *             0  : Ready or Busy (No Listen mode ongoing)\n\r
+  *             1  : Listen (peripheral in Address Listen Mode)\n\r
+  *          b2     Intrinsic process state\n\r
+  *             0  : Ready\n\r
+  *             1  : Busy (peripheral busy with some configuration or internal operations)\n\r
+  *          b1     Rx state\n\r
+  *             0  : Ready (no Rx operation ongoing)\n\r
+  *             1  : Busy (Rx operation ongoing)\n\r
+  *          b0     Tx state\n\r
+  *             0  : Ready (no Tx operation ongoing)\n\r
   *             1  : Busy (Tx operation ongoing)
   * @{
   */
@@ -127,19 +127,19 @@ typedef enum
 
 /** @defgroup HAL_mode_structure_definition HAL mode structure definition
   * @brief  HAL Mode structure definition
-  * @note  HAL I2C Mode value coding follow below described bitmap :\n
-  *          b7     (not used)\n
-  *             x  : Should be set to 0\n
-  *          b6\n
-  *             0  : None\n
-  *             1  : Memory (HAL I2C communication is in Memory Mode)\n
-  *          b5\n
-  *             0  : None\n
-  *             1  : Slave (HAL I2C communication is in Slave Mode)\n
-  *          b4\n
-  *             0  : None\n
-  *             1  : Master (HAL I2C communication is in Master Mode)\n
-  *          b3-b2-b1-b0  (not used)\n
+  * @note  HAL I2C Mode value coding follow below described bitmap :\n\r
+  *          b7     (not used)\n\r
+  *             x  : Should be set to 0\n\r
+  *          b6\n\r
+  *             0  : None\n\r
+  *             1  : Memory (HAL I2C communication is in Memory Mode)\n\r
+  *          b5\n\r
+  *             0  : None\n\r
+  *             1  : Slave (HAL I2C communication is in Slave Mode)\n\r
+  *          b4\n\r
+  *             0  : None\n\r
+  *             1  : Master (HAL I2C communication is in Master Mode)\n\r
+  *          b3-b2-b1-b0  (not used)\n\r
   *             xxxx : Should be set to 0000
   * @{
   */

@@ -61,11 +61,11 @@ tBleStatus aci_l2cap_connection_parameter_update_request(uint16_t conn_handle, u
  * @param interval_max The maximum connection interval parameter as received in the l2cap connection update request event.
  * @param slave_latency The slave latency parameter as received in the l2cap connection update request event.
  * @param timeout_multiplier The supervision connection timeout parameter as received in the l2cap connection update request event.
- * @param min_ce_length Minimum length of connection event needed for the LE connection.\n
- * 						Range: 0x0000 - 0xFFFF\n
+ * @param min_ce_length Minimum length of connection event needed for the LE connection.\n\r
+ * 						Range: 0x0000 - 0xFFFF\n\r
  * 						Time = N x 0.625 msec.
- * @param max_ce_length Maximum length of connection event needed for the LE connection.\n
- * 						Range: 0x0000 - 0xFFFF\n
+ * @param max_ce_length Maximum length of connection event needed for the LE connection.\n\r
+ * 						Range: 0x0000 - 0xFFFF\n\r
  * 						Time = N x 0.625 msec.
  * @param id Identifier received in @ref EVT_BLUE_L2CAP_CONN_UPD_REQ event.
  * @param accept @arg 0x00: The connection update parameters are not acceptable.

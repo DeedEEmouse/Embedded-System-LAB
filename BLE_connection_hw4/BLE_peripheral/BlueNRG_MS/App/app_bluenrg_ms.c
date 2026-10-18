@@ -38,6 +38,8 @@
 
 /* USER CODE BEGIN Includes */
 #include "stm32l475e_iot01_accelero.h"
+#include <stdbool.h>
+
 /* USER CODE END Includes */
 
 /* Private defines -----------------------------------------------------------*/
@@ -75,6 +77,8 @@ static void Set_Random_Motion_Values(uint32_t cnt);
 static void Reset_Motion_Values(void);
 
 /* USER CODE BEGIN PFP */
+extern volatile AxesRaw_t latest_acc;
+volatile bool acc_data_ready = false;
 
 /* USER CODE END PFP */
 
@@ -131,7 +135,7 @@ void MX_BlueNRG_MS_Init(void)
   hci_reset();
   HAL_Delay(100);
 
-  PRINTF("HWver %d\nFWver %d\n", hwVersion, fwVersion);
+  PRINTF("HWver %d\n\rFWver %d\n\r", hwVersion, fwVersion);
   if (hwVersion > 0x30) { /* X-NUCLEO-IDB05A1 expansion board is used */
     bnrg_expansion_board = IDB05A1;
   }
@@ -139,18 +143,18 @@ void MX_BlueNRG_MS_Init(void)
   ret = aci_hal_read_config_data(CONFIG_DATA_RANDOM_ADDRESS, BDADDR_SIZE, &bdaddr_len_out, bdaddr);
 
   if (ret) {
-    PRINTF("Read Static Random address failed.\n");
+    PRINTF("Read Static Random address failed.\n\r");
   }
 
   if ((bdaddr[5] & 0xC0) != 0xC0) {
-    PRINTF("Static Random address not well formed.\n");
+    PRINTF("Static Random address not well formed.\n\r");
     while(1);
   }
 
   /* GATT Init */
   ret = aci_gatt_init();
   if(ret){
-    PRINTF("GATT_Init failed.\n");
+    PRINTF("GATT_Init failed.\n\r");
   }
 
   /* GAP Init */
@@ -161,14 +165,14 @@ void MX_BlueNRG_MS_Init(void)
     ret = aci_gap_init_IDB04A1(GAP_PERIPHERAL_ROLE_IDB04A1, &service_handle, &dev_name_char_handle, &appearance_char_handle);
   }
   if (ret != BLE_STATUS_SUCCESS) {
-    PRINTF("GAP_Init failed.\n");
+    PRINTF("GAP_Init failed.\n\r");
   }
 
   /* Update device name 這裡是在封包中加 service 的地方*/
   ret = aci_gatt_update_char_value(service_handle, dev_name_char_handle, 0,
                                    strlen(name), (uint8_t *)name);
   if (ret) {
-    PRINTF("aci_gatt_update_char_value failed.\n");
+    PRINTF("aci_gatt_update_char_value failed.\n\r");
     while(1);
   }
 
@@ -181,25 +185,25 @@ void MX_BlueNRG_MS_Init(void)
                                      123456,
                                      BONDING);
   if (ret) {
-    PRINTF("aci_gap_set_authentication_requirement failed.\n");
+    PRINTF("aci_gap_set_authentication_requirement failed.\n\r");
     while(1);
   }
 
-  PRINTF("BLE Stack Initialized\n");
+  PRINTF("BLE Stack Initialized\n\r");
 
   ret = Add_HWServW2ST_Service();
   if(ret == BLE_STATUS_SUCCESS) {
-    PRINTF("BlueMS HW service added successfully.\n");
+    PRINTF("BlueMS HW service added successfully.\n\r");
   } else {
-    PRINTF("Error while adding BlueMS HW service: 0x%02x\r\n", ret);
+    PRINTF("Error while adding BlueMS HW service: 0x%02x\r\n\r", ret);
     while(1);
   }
 
   ret = Add_SWServW2ST_Service();
   if(ret == BLE_STATUS_SUCCESS) {
-     PRINTF("BlueMS SW service added successfully.\n");
+     PRINTF("BlueMS SW service added successfully.\n\r");
   } else {
-     PRINTF("Error while adding BlueMS HW service: 0x%02x\r\n", ret);
+     PRINTF("Error while adding BlueMS HW service: 0x%02x\r\n\r", ret);
      while(1);
   }
 
@@ -253,7 +257,6 @@ static void User_Process(void)
 {
   float data_t;
   float data_p;
-  static uint32_t counter = 0;
 
   if (set_connectable)
   {
@@ -276,28 +279,47 @@ static void User_Process(void)
 #endif
     BSP_LED_Toggle(LED2);
 
-    if (connected)
+    if (connected && acc_data_ready)
     {
       /* Set a random seed */
       srand(HAL_GetTick());
 
-      /* Update emulated Environmental data
-       * TODO 把這裡改成真的資料 */
+      /* Update emulated Environmental data*/
       Set_Random_Environmental_Values(&data_t, &data_p);
       BlueMS_Environmental_Update((int32_t)(data_p *100), (int16_t)(data_t * 10));
 
       /* Update emulated Acceleration, Gyroscope and Sensor Fusion data */
-      Set_Random_Motion_Values(counter);
-      Acc_Update(&x_axes, &g_axes, &m_axes);
-      Quat_Update(&q_axes);
+      //Set_Random_Motion_Values(counter);
+      //Quat_Update(&q_axes);
 
-      counter ++;
-      if (counter == 40) {
-        counter = 0;
-        Reset_Motion_Values();
-      }
+
+
+
+	  int16_t x;
+	  int16_t y;
+	  int16_t z;
+
+
+	  x = (int16_t)latest_acc.AXIS_X;
+	  y = (int16_t)latest_acc.AXIS_Y;
+	  z = (int16_t)latest_acc.AXIS_Z;
+
+	  AccXYZ_Update(x, y, z);
+	  uint32_t current_tick = HAL_GetTick();
+
+	  printf("time: %ld \n\r", current_tick);
+	  acc_data_ready = false;
+      Acc_Update(&latest_acc, &g_axes, &m_axes);
+      /*
+      printf(
+          "The update value is: X=%d, Y=%d, Z=%d \r\n\r",
+		  x, y, z
+      ); */
+
+
+
 #if !USE_BUTTON
-      HAL_Delay(1000); /* wait 1 sec before sending new data */
+     /* HAL_Delay(1000);  wait 1 sec before sending new data */
 #endif
     }
 #if USE_BUTTON
@@ -323,10 +345,10 @@ static void Set_Random_Environmental_Values(float *data_t, float *data_p)
  * @brief  Set random values for all motion sensor data
  * @param  uint32_t counter for changing the rotation direction
  * @retval None
- */
+
 static void Set_Random_Motion_Values(uint32_t cnt)
 {
-  /* Update Acceleration, Gyroscope and Sensor Fusion data */
+   Update Acceleration, Gyroscope and Sensor Fusion data
   if (cnt < 20) {
     x_axes.AXIS_X +=  (10  + ((uint64_t)rand()*3*cnt)/RAND_MAX);
     x_axes.AXIS_Y += -(10  + ((uint64_t)rand()*5*cnt)/RAND_MAX);
@@ -360,16 +382,16 @@ static void Set_Random_Motion_Values(uint32_t cnt)
 
 }
 
-/**
+
  * @brief  Reset values for all motion sensor data
  * @param  None
  * @retval None
  */
 static void Reset_Motion_Values(void)
 {
-  x_axes.AXIS_X = (x_axes.AXIS_X)%2000 == 0 ? -x_axes.AXIS_X : 10;
-  x_axes.AXIS_Y = (x_axes.AXIS_Y)%2000 == 0 ? -x_axes.AXIS_Y : -10;
-  x_axes.AXIS_Z = (x_axes.AXIS_Z)%2000 == 0 ? -x_axes.AXIS_Z : 10;
+/*  x_axes.AXIS_X = (x_axes.AXIS_X)%2000 == 0 ? -x_axes.AXIS_X : 10;
+ * x_axes.AXIS_Y = (x_axes.AXIS_Y)%2000 == 0 ? -x_axes.AXIS_Y : -10;
+ * x_axes.AXIS_Z = (x_axes.AXIS_Z)%2000 == 0 ? -x_axes.AXIS_Z : 10; */
   g_axes.AXIS_X = (g_axes.AXIS_X)%2000 == 0 ? -g_axes.AXIS_X : 100;
   g_axes.AXIS_Y = (g_axes.AXIS_Y)%2000 == 0 ? -g_axes.AXIS_Y : -100;
   g_axes.AXIS_Z = (g_axes.AXIS_Z)%2000 == 0 ? -g_axes.AXIS_Z : 100;
@@ -391,3 +413,5 @@ void BSP_PB_Callback(Button_TypeDef Button)
   /* Set the User Button flag */
   user_button_pressed = 1;
 }
+
+

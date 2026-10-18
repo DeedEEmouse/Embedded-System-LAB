@@ -153,7 +153,7 @@ int32_t HCI_TL_SPI_Receive(uint8_t* buffer, uint16_t size)
     for (int i=0; i<len; i++) {
       PRINT_CSV(" %02x", buffer[i]);
     }
-    PRINT_CSV("\n");
+    PRINT_CSV("\n\r");
   }
 #endif
 
